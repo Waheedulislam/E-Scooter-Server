@@ -3,7 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 const app = express();
 const port = 5000;
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 app.use(cors());
 app.use(express.json());
@@ -35,7 +35,7 @@ async function run() {
     ////////////////////// User Collection ////////////////////////
     app.post("/users", async (req, res) => {
       const user = req.body;
-      console.log(user);
+      // console.log(user);
       const query = { email: user?.email };
       const existingUser = await usersCollection.findOne(query);
       if (existingUser) {
@@ -66,6 +66,12 @@ async function run() {
     app.post("/carts", async (req, res) => {
       const cartData = req.body;
       const result = await cartsCollection.insertOne(cartData);
+      res.send(result);
+    });
+    app.delete("/carts/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await cartsCollection.deleteOne(query);
       res.send(result);
     });
 
